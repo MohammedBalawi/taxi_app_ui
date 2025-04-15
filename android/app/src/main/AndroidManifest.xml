@@ -1,6 +1,4 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
         android:label="taxi_receipt"
@@ -45,12 +43,6 @@
             <data android:mimeType="text/plain"/>
         </intent>
     </queries>
-    <manifest>
-        <application>
-            <meta-data
-                android:name="com.google.android.geo.API_KEY"
-                android:value="YOUR_API_KEY_HERE"/>
-        </application>
-    </manifest>
+
 
 </manifest>
