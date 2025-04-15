@@ -3,7 +3,7 @@ name: Build Flutter APK
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build:
@@ -24,7 +24,7 @@ jobs:
         run: flutter build apk --release
 
       - name: Upload APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
-          name: NovaTaxiApp-release-apk
+          name: nova_taxi_app-release-apk
           path: build/app/outputs/flutter-apk/app-release.apk
