@@ -14,18 +14,10 @@ class AppLocalizations {
 
   static final Map<String, Map<String, String>> _localizedValues = {
     'en': {
-      'login': 'Login',
-      'signup': 'Sign Up',
-      'home': 'Home',
-      'settings': 'Settings',
-      'where_to': 'Where to?',
+      // latar make in file en.lin/10
     },
     'ar': {
-      'login': 'تسجيل الدخول',
-      'signup': 'إنشاء حساب',
-      'home': 'الرئيسية',
-      'settings': 'الإعدادات',
-      'where_to': 'إلى أين؟',
+      // latar make in file ar.lin/10
     },
   };
 

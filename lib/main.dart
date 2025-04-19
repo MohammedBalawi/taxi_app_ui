@@ -1,30 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:taxi_receipt/routes/routs_screen.dart';
+import 'package:taxi_receipt/screens/driver/driver_home_screen.dart';
 import 'package:taxi_receipt/theme.dart';
 import 'localization/app_localizations.dart';
-import 'screens/splash_screen.dart';
-import 'screens/login_screen.dart';
-import 'screens/signup_screen.dart';
-import 'screens/home_screen.dart';
-import 'screens/select_destination_screen.dart';
-import 'screens/car_payment_screen.dart';
-import 'screens/tracking_screen.dart';
-import 'screens/rating_screen.dart';
-import 'screens/settings_screen.dart';
 
-void main() {
-  runApp(const NovaTaxiApp());
+
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Supabase.initialize(
+    url: 'https://benbphmzvxkfjwzbngpl.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJlbmJwaG16dnhrZmp3emJuZ3BsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ5NzcyNjgsImV4cCI6MjA2MDU1MzI2OH0.UfvVySli5Yj1ai-cW--H9wJ6gpKnj7f8Rgjl6ZPSBHM',
+  );
+
+  runApp(const TaxiApp());
 }
 
-class NovaTaxiApp extends StatelessWidget {
-  const NovaTaxiApp({Key? key}) : super(key: key);
+class TaxiApp extends StatelessWidget {
+  const TaxiApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Nova Taxi App',
+      title: ' Taxi App',
       debugShowCheckedModeBanner: false,
       theme: lightTheme,
       darkTheme: darkTheme,
+      themeMode: ThemeMode.system,
+
       localizationsDelegates: const [
         AppLocalizations.delegate,
         // GlobalMaterialLocalizations.delegate,
@@ -36,20 +41,8 @@ class NovaTaxiApp extends StatelessWidget {
         Locale('ar'),
       ],
 
-
-      themeMode: ThemeMode.system,
       initialRoute: '/',
-      routes: {
-        '/': (context) => const SplashScreen(),
-        '/login': (context) => const LoginScreen(),
-        '/signup': (context) => const SignupScreen(),
-        '/home': (context) => const HomeScreen(),
-        '/destination': (context) => const SelectDestinationScreen(),
-        '/car_payment': (context) => const CarPaymentScreen(),
-        '/tracking': (context) => const TrackingScreen(),
-        '/rating': (context) => const RatingScreen(),
-        '/settings': (context) => const SettingsScreen(),
-      },
+      routes: appRoutes,
     );
   }
 }

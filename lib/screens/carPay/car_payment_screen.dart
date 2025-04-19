@@ -1,28 +1,33 @@
 import 'package:flutter/material.dart';
-import 'tracking_screen.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../driver/tracking_screen.dart';
 
 class CarPaymentScreen extends StatefulWidget {
-  const CarPaymentScreen({Key? key}) : super(key: key);
+  final String rideId;
+
+  const CarPaymentScreen({super.key, required this.rideId});
 
   @override
   State<CarPaymentScreen> createState() => _CarPaymentScreenState();
 }
 
 class _CarPaymentScreenState extends State<CarPaymentScreen> {
+  final supabase = Supabase.instance.client;
+
   int selectedCar = 0;
-  String selectedPayment = "Card";
+  String selectedPayment = 'Card';
 
   final carTypes = [
-    {"type": "Economy", "price": "SAR 25"},
-    {"type": "Business", "price": "SAR 38"},
-    {"type": "XL", "price": "SAR 52"},
+    {'type': 'Economy', 'price': 'SAR 25'},
+    {'type': 'Business', "price": 'SAR 38'},
+    {'type': 'XL', 'price': 'SAR 52'},
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Select Car & Payment"),
+        title: const Text('Select Car & Payment'),
         backgroundColor: Colors.amberAccent,
         foregroundColor: Colors.black,
       ),
@@ -30,7 +35,7 @@ class _CarPaymentScreenState extends State<CarPaymentScreen> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            const Text("Choose your ride", style: TextStyle(fontSize: 18)),
+            const Text('Choose your ride', style: TextStyle(fontSize: 18)),
             const SizedBox(height: 16),
             SizedBox(
               height: 140,
@@ -49,11 +54,12 @@ class _CarPaymentScreenState extends State<CarPaymentScreen> {
                       margin: const EdgeInsets.only(right: 16),
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: isSelected ? Colors.amber[200] : Colors.grey[200],
+                        color:
+                            isSelected ? Colors.amber[200] : Colors.grey[200],
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           if (isSelected)
-                            BoxShadow(
+                            const BoxShadow(
                               blurRadius: 6,
                               color: Colors.black26,
                               offset: Offset(0, 3),
@@ -64,15 +70,19 @@ class _CarPaymentScreenState extends State<CarPaymentScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-
                             decoration: BoxDecoration(
-
-                              borderRadius: BorderRadius.circular(20)
+                              borderRadius: BorderRadius.circular(20),
                             ),
-                              child: Image(image: AssetImage('assets/im3.png'))),
+                            child: const Image(
+                                image: AssetImage(
+                                    'assets/ChatGPT Image Apr 19, 2025, 05_55_37 AM.png'),
+                                width: 60),
+                          ),
                           const SizedBox(height: 10),
-                          Text(car["type"]!, style: const TextStyle(fontWeight: FontWeight.bold)),
-                          Text(car["price"]!),
+                          Text(car['type']!,
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold)),
+                          Text(car['price']!),
                         ],
                       ),
                     ),
@@ -81,24 +91,39 @@ class _CarPaymentScreenState extends State<CarPaymentScreen> {
               ),
             ),
             const SizedBox(height: 30),
-            const Text("Select Payment Method", style: TextStyle(fontSize: 18)),
+            const Text('Select Payment Method', style: TextStyle(fontSize: 18)),
             const SizedBox(height: 12),
             Row(
               children: [
-                _buildPaymentOption("Card", Icons.credit_card),
+                _buildPaymentOption('Card', Icons.credit_card),
                 const SizedBox(width: 20),
-                _buildPaymentOption("Cash", Icons.attach_money),
+                _buildPaymentOption('Cash', Icons.attach_money),
               ],
             ),
             const Spacer(),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const TrackingScreen()),
-                  );
+                onPressed: () async {
+                  try {
+                    await supabase.from('rides').update({
+                      'car_type': carTypes[selectedCar]['type'],
+                      'payment_method': selectedPayment,
+                      'status': 'accepted',
+                    }).eq('id', '0e2f4ab7-9a45-4af8-828f-66f0da098667');
+
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const TrackingScreen(
+                            rideId: '0e2f4ab7-9a45-4af8-828f-66f0da098667'),
+                      ),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Error: ${e.toString()}")),
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -107,10 +132,11 @@ class _CarPaymentScreenState extends State<CarPaymentScreen> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text("Request Ride", style: TextStyle(fontSize: 16,color: Colors.white)),
+                child: const Text('Request Ride',
+                    style: TextStyle(fontSize: 16, color: Colors.white)),
               ),
             ),
-            SizedBox(height: 20,)
+            const SizedBox(height: 20),
           ],
         ),
       ),

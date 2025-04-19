@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'car_payment_screen.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:taxi_receipt/screens/driver/searching_driver_screen.dart';
+import '../carPay/car_payment_screen.dart';
 
 class SelectDestinationScreen extends StatefulWidget {
   const SelectDestinationScreen({Key? key}) : super(key: key);
@@ -10,22 +12,23 @@ class SelectDestinationScreen extends StatefulWidget {
 
 class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
   final TextEditingController _controller = TextEditingController();
+  final supabase = Supabase.instance.client;
 
   final List<String> suggestions = [
-    "Home",
-    "Work",
-    "King Abdulaziz Airport",
-    "Mall of Arabia",
-    "University",
+    'Home',
+    'Work',
+    'King Abdulaziz Airport',
+    'Mall of Arabia',
+    'University',
   ];
 
-  String selected = "";
+  String selected = '';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Select Destination"),
+        title: const Text('Select Destination'),
         backgroundColor: Colors.amberAccent,
         foregroundColor: Colors.black,
       ),
@@ -37,7 +40,7 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
               controller: _controller,
               onChanged: (value) => setState(() => selected = value),
               decoration: InputDecoration(
-                hintText: "Enter destination...",
+                hintText: 'Enter destination...',
                 prefixIcon: const Icon(Icons.location_on),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -74,16 +77,37 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const CarPaymentScreen()),
-                    );
+                  onPressed: () async {
+                    final userId = supabase.auth.currentUser?.id;
+                    if (userId == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Not logged in')),
+                      );
+                      return;
+                    }
+
+                    try {
+                      await supabase.from('rides').insert({
+                        'user_id': userId,
+                        'pickup_location': 'Default Location',
+                        'drop_location': selected,
+                        'status': 'pending',
+                      });
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const SearchingDriverScreen(rideId: '0e2f4ab7-9a45-4af8-828f-66f0da098667',)),
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Error: ${e.toString()}')),
+                      );
+                    }
                   },
-                  child: const Text("Next", style: TextStyle(fontSize: 16,color: Colors.white)),
+                  child: const Text('Next', style: TextStyle(fontSize: 16, color: Colors.white)),
                 ),
               ),
-            SizedBox(height: 20,)
+            const SizedBox(height: 20),
           ],
         ),
       ),
